@@ -2,13 +2,18 @@
 
 set -e
 
+sed -i -e "s@^ipv4-network =.*@ipv4-network = ${VPN_NETWORK}@" \
+       -e "s@^ipv4-netmask =.*@ipv4-netmask = ${VPN_NETMASK}@" \
+       -e "s@^no-route =.*@no-route = ${LAN_NETWORK}/${LAN_NETMASK}@" /etc/ocserv/ocserv.conf
+
+echo "${VPN_PASSWORD}" | ocpasswd -c /etc/ocserv/ocpasswd "${VPN_USERNAME}"
+
 if [ -f /etc/ocserv/certs/server-cert.pem ]
 then
-    echo "Initialized!"
+    echo "certs existed !"
     exit 0
 else
-    echo "Initializing ..."
-fi
+    echo "Initializing certs ..."
 
 mkdir -p /etc/ocserv/certs
 cd /etc/ocserv/certs
@@ -85,8 +90,4 @@ certtool --to-p12 \
          --p12-name "${VPN_DOMAIN}" \
          --password "${VPN_PASSWORD}"
 
-sed -i -e "s@^ipv4-network =.*@ipv4-network = ${VPN_NETWORK}@" \
-       -e "s@^ipv4-netmask =.*@ipv4-netmask = ${VPN_NETMASK}@" \
-       -e "s@^no-route =.*@no-route = ${LAN_NETWORK}/${LAN_NETMASK}@" /etc/ocserv/ocserv.conf
-
-echo "${VPN_PASSWORD}" | ocpasswd -c /etc/ocserv/ocpasswd "${VPN_USERNAME}"
+fi
