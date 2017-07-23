@@ -1,5 +1,4 @@
 #!/bin/sh
-
 set -e
 
 sed -i -e "s@^ipv4-network =.*@ipv4-network = ${VPN_NETWORK}@" \
@@ -7,13 +6,6 @@ sed -i -e "s@^ipv4-network =.*@ipv4-network = ${VPN_NETWORK}@" \
        -e "1s@^no-route =.*@no-route = ${LAN_NETWORK}/${LAN_NETMASK}@" /etc/ocserv/ocserv.conf
 
 echo "${VPN_PASSWORD}" | ocpasswd -c /etc/ocserv/ocpasswd "${VPN_USERNAME}"
-
-if [ -f /etc/ocserv/certs/server-cert.pem ]
-then
-    echo "[INFO] certs existed, skipping gen certs"
-    exit 0
-else
-    echo "[INFO] generating certs ..."
 
 mkdir -p /etc/ocserv/certs
 cd /etc/ocserv/certs
@@ -49,45 +41,52 @@ signing_key
 tls_www_client
 _EOF_
 
-# gen ca keys
-certtool --generate-privkey \
-         --outfile ca-key.pem
 
-certtool --generate-self-signed \
-         --load-privkey /etc/ocserv/certs/ca-key.pem \
-         --template ca.tmpl \
-         --outfile ca-cert.pem
+if [ ! -f /etc/ocserv/certs/ca-key.pem ]
+  # gen ca keys
+  certtool --generate-privkey \
+           --outfile ocserv-ca-key.pem
 
-# gen server keys
-certtool --generate-privkey \
-         --outfile server-key.pem
+  certtool --generate-self-signed \
+           --load-privkey /etc/ocserv/certs/ca-key.pem \
+           --template ca.tmpl \
+           --outfile ocserv-ca-cert.pem
+ fi
 
-certtool --generate-certificate \
-         --load-privkey server-key.pem \
-         --load-ca-certificate ca-cert.pem \
-         --load-ca-privkey ca-key.pem \
-         --template server.tmpl \
-         --outfile server-cert.pem
 
-# gen client keys
-certtool --generate-privkey \
-         --outfile client-key.pem
+if [ "$OC_GENERATE_KEY" != "false"]; then
+  # gen server keys
+  certtool --generate-privkey \
+           --outfile "${VPN_DOMAIN}".self-signed.key
 
-certtool --generate-certificate \
-         --load-privkey client-key.pem \
-         --load-ca-certificate ca-cert.pem \
-         --load-ca-privkey ca-key.pem \
-         --template client.tmpl \
-         --outfile client-cert.pem
+  certtool --generate-certificate \
+           --load-privkey "${VPN_DOMAIN}".self-signed.key \
+           --load-ca-certificate ca-cert.pem \
+           --load-ca-privkey ca-key.pem \
+           --template server.tmpl \
+           --outfile "${VPN_DOMAIN}".self-signed.crt
+fi
 
-certtool --to-p12 \
-         --pkcs-cipher 3des-pkcs12 \
-         --load-ca-certificate ca-cert.pem \
-         --load-certificate client-cert.pem \
-         --load-privkey client-key.pem \
-         --outfile client.p12 \
-         --outder \
-         --p12-name "${VPN_DOMAIN}" \
-         --password "${VPN_PASSWORD}"
 
+if [ ! -f /etc/ocserv/certs/ca-key.pem ]
+  # gen client keys
+  certtool --generate-privkey \
+           --outfile client-key.pem
+
+  certtool --generate-certificate \
+           --load-privkey client-key.pem \
+           --load-ca-certificate ocserv-ca-cert.pem \
+           --load-ca-privkey ocserv-ca-key.pem \
+           --template client.tmpl \
+           --outfile client-cert.pem
+
+  certtool --to-p12 \
+           --pkcs-cipher 3des-pkcs12 \
+           --load-ca-certificate ocserv-ca-cert.pem \
+           --load-certificate client-cert.pem \
+           --load-privkey client-key.pem \
+           --outfile client.p12 \
+           --outder \
+           --p12-name "${VPN_DOMAIN}" \
+           --password "${VPN_PASSWORD}"
 fi
