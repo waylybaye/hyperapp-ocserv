@@ -5,6 +5,7 @@ RUN apk add --update --no-cache musl-dev iptables libev openssl gnutls-dev readl
 
 ARG OC_VERSION=0.11.8
 
+ENV VPN_PORT=443
 ENV VPN_NETWORK=10.20.30.0
 ENV VPN_NETMASK=255.255.255.0
 ENV LAN_NETWORK=192.168.0.0
@@ -34,7 +35,6 @@ RUN buildDeps="xz gcc autoconf make linux-headers libev-dev  "; \
 	&& apk del --purge $buildDeps \
         && rm -rf /src
 
-COPY cn-no-route.txt /tmp/
 RUN set -x \
 	&& sed -i 's/\.\/sample\.passwd/\/etc\/ocserv\/ocpasswd/' /etc/ocserv/ocserv.conf \
 	&& sed -i 's/\(max-same-clients = \)2/\110/' /etc/ocserv/ocserv.conf \
@@ -44,13 +44,13 @@ RUN set -x \
 	&& sed -i 's/192.168.1.2/8.8.8.8/' /etc/ocserv/ocserv.conf \
 	&& sed -i 's/^route/#route/' /etc/ocserv/ocserv.conf \
 	&& sed -i 's/^no-route/#no-route/' /etc/ocserv/ocserv.conf \
-	&& cat /tmp/cn-no-route.txt >> /etc/ocserv/ocserv.conf \
-	&& rm -fr /tmp/cn-no-route.txt
 
+COPY cn-no-route.txt /etc/ocserv
+COPY ocserv.conf /etc/ocserv
 WORKDIR /etc/ocserv
 
 COPY docker-entrypoint.sh /entrypoint.sh
 COPY init.sh /init.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
-EXPOSE 443/tcp 443/udp
+EXPOSE $VPN_PORT/tcp $VPN_PORT/udp
