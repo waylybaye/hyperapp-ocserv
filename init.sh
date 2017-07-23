@@ -10,10 +10,10 @@ echo "${VPN_PASSWORD}" | ocpasswd -c /etc/ocserv/ocpasswd "${VPN_USERNAME}"
 
 if [ -f /etc/ocserv/certs/server-cert.pem ]
 then
-    echo "certs existed !"
+    echo "[INFO] certs existed, skipping gen certs"
     exit 0
 else
-    echo "Initializing certs ..."
+    echo "[INFO] generating certs ..."
 
 mkdir -p /etc/ocserv/certs
 cd /etc/ocserv/certs
