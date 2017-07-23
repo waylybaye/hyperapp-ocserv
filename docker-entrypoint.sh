@@ -14,13 +14,13 @@ function changeConfig {
 function commentConfig {
   local prop=$1
   echo "[INFO] disable $prop"
-  sed -i "s/#\($prop\s*=.*\)/\1/" $CONFIG_FILE
+  sed -i "s/\($prop\s*=.*\)/#\1/" $CONFIG_FILE
 }
 
 function uncommentConfig {
   local prop=$1
   echo "[INFO] enable $prop"
-  sed -i "s/\($prop\s*=.*\)/#\1/" $CONFIG_FILE
+  sed -i "s/#\($prop\s*=.*\)/\1/" $CONFIG_FILE
 }
 
 if [ -z $VPN_DOMAIN ]; then
@@ -30,17 +30,18 @@ fi
 
 if [ "$OC_GENERATE_KEY" = "false" ]; then
   changeConfig "server-key" "/etc/ocserv/certs/${VPN_DOMAIN}.key"
-  changeConfig "server-crt" "/etc/ocserv/certs/${VPN_DOMAIN}.crt"
+  changeConfig "server-cert" "/etc/ocserv/certs/${VPN_DOMAIN}.crt"
 else
   changeConfig "server-key" "/etc/ocserv/certs/${VPN_DOMAIN}.self-signed.key"
-  changeConfig "server-crt" "/etc/ocserv/certs/${VPN_DOMAIN}.self-signed.crt"
+  changeConfig "server-cert" "/etc/ocserv/certs/${VPN_DOMAIN}.self-signed.crt"
 fi
 
-if [ "$OC_DISABLE_PLAIN" = "true" ]; then
-  commentConfig "enable-auth"
-else
-  uncommentConfig "enable-auth"
-fi
+
+#if [ "$OC_DISABLE_PLAIN" = "true" ]; then
+#  commentConfig "enable-auth"
+#else
+#  uncommentConfig "enable-auth"
+#fi
 
 /init.sh
 
