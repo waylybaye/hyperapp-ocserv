@@ -43,7 +43,7 @@ RUN set -x \
 	&& sed -i '/^ipv4-network = /{s/192.168.1.0/192.168.99.0/}' /etc/ocserv/ocserv.conf \
 	&& sed -i 's/192.168.1.2/8.8.8.8/' /etc/ocserv/ocserv.conf \
 	&& sed -i 's/^route/#route/' /etc/ocserv/ocserv.conf \
-	&& sed -i 's/^no-route/#no-route/' /etc/ocserv/ocserv.conf \
+	&& sed -i 's/^no-route/#no-route/' /etc/ocserv/ocserv.conf
 
 COPY cn-no-route.txt /etc/ocserv
 COPY ocserv.conf /etc/ocserv
