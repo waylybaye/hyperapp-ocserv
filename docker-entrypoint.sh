@@ -2,6 +2,11 @@
 set -e
 CONFIG_FILE=/etc/ocserv/ocserv.conf
 
+if [ ! -z $VPN_DOMAIN ]; then
+  echo "[ERROR]: VPN_DOMAIN is required."
+  exit 1
+fi
+
 /init.sh
 
 if [ ! -e /dev/net/tun ]; then
