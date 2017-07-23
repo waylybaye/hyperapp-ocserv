@@ -6,23 +6,21 @@ function changeConfig {
   local prop=$1
   local var=$2
   if [ -n "$var" ]; then
-    echo "Setting $prop to $var"
+    echo "[INFO] Setting $prop to $var"
     sed -i "/$prop\s*=/ c $prop=$var" $CONFIG_FILE
   fi
 }
 
 function commentConfig {
   local prop=$1
-  echo "[DEBUG] comment $prop"
+  echo "[INFO] disable $prop"
   sed -i "s/#\($prop\s*=.*\)/\1/" $CONFIG_FILE
-  fi
 }
 
 function uncommentConfig {
   local prop=$1
-  echo "[DEBUG] comment $prop"
+  echo "[INFO] enable $prop"
   sed -i "s/\($prop\s*=.*\)/#\1/" $CONFIG_FILE
-  fi
 }
 
 if [ -z $VPN_DOMAIN ]; then
@@ -30,15 +28,15 @@ if [ -z $VPN_DOMAIN ]; then
   exit 1
 fi
 
-if [ "$OC_GENERATE_KEY" = "false"]; then
+if [ "$OC_GENERATE_KEY" = "false" ]; then
   changeConfig "server-key" "/etc/ocserv/certs/${VPN_DOMAIN}.key"
   changeConfig "server-crt" "/etc/ocserv/certs/${VPN_DOMAIN}.crt"
-else;
+else
   changeConfig "server-key" "/etc/ocserv/certs/${VPN_DOMAIN}.self-signed.key"
   changeConfig "server-crt" "/etc/ocserv/certs/${VPN_DOMAIN}.self-signed.crt"
 fi
 
-if [ "$OC_DISABLE_PLAIN" = "true"]; then
+if [ "$OC_DISABLE_PLAIN" = "true" ]; then
   commentConfig "enable-auth"
 else
   uncommentConfig "enable-auth"
