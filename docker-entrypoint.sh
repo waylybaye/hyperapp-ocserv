@@ -2,7 +2,7 @@
 set -e
 CONFIG_FILE=/etc/ocserv/ocserv.conf
 
-if [ ! -z $VPN_DOMAIN ]; then
+if [ -z $VPN_DOMAIN ]; then
   echo "[ERROR]: VPN_DOMAIN is required."
   exit 1
 fi
@@ -20,7 +20,7 @@ function changeConfig {
   local var=$2
   if [ -n "$var" ]; then
     echo "Setting $prop to $var"
-    sed -i "/$prop\s*=/ c $prop=$var" /data/server.properties
+    sed -i "/$prop\s*=/ c $prop=$var" $CONFIG_FILE
   fi
 }
 
