@@ -51,8 +51,8 @@ if [ ! -e /dev/net/tun ]; then
     chmod 600 /dev/net/tun
 fi
 
-changeConfig "tcp-port" "$VPN_PORT"
-changeConfig "udp-port" "$VPN_PORT"
+changeConfig "tcp-port" "$PORT"
+changeConfig "udp-port" "$PORT"
 changeConfig "max-clients" "$OC_MAX_CLIENTS"
 changeConfig "max-same-clients" "$OC_MAX_SAME_CLIENTS"
 

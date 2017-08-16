@@ -5,7 +5,7 @@ RUN apk add --update --no-cache musl-dev iptables libev openssl gnutls-dev readl
 
 ARG OC_VERSION=0.11.8
 
-ENV VPN_PORT=443
+ENV PORT=443
 ENV VPN_NETWORK=10.24.0.0
 ENV VPN_NETMASK=255.255.255.0
 ENV LAN_NETWORK=192.168.0.0
@@ -53,4 +53,4 @@ COPY docker-entrypoint.sh /entrypoint.sh
 COPY init.sh /init.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
-EXPOSE $VPN_PORT/tcp $VPN_PORT/udp
+EXPOSE $PORT/tcp $PORT/udp
