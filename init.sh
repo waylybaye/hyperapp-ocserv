@@ -4,8 +4,12 @@ set -e
 sed -i -e "s@^ipv4-network =.*@ipv4-network = ${VPN_NETWORK}@" \
        -e "s@^ipv4-netmask =.*@ipv4-netmask = ${VPN_NETMASK}@" /etc/ocserv/ocserv.conf
       #  -e "1s@^no-route =.*@no-route = ${LAN_NETWORK}/${LAN_NETMASK}@"
-
-echo "${VPN_PASSWORD}" | ocpasswd -c /etc/ocserv/ocpasswd "${VPN_USERNAME}"
+if [ "$OC_CERT_AND_PLAIN" = "true" ]; then
+  echo "${VPN_PASSWORD}" | ocpasswd -c /etc/ocserv/ocpasswd "${VPN_USERNAME}"
+else
+  echo -n "${VPN_PASSWORD}${RANDOM}" | md5sum | sha256sum | ocpasswd -c /etc/ocserv/ocpasswd "${VPN_USERNAME}"
+fi
+#echo "${VPN_PASSWORD}" | ocpasswd -c /etc/ocserv/ocpasswd "${VPN_USERNAME}"
 CLIENT="${VPN_USERNAME}@${VPN_DOMAIN}"
 
 mkdir -p /etc/ocserv/certs
