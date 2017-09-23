@@ -34,8 +34,8 @@ tls_www_server
 _EOF_
 
 cat > ocserv-client.tmpl <<_EOF_
-cn = "client@${VPN_DOMAIN}"
-uid = "client@${VPN_DOMAIN}"
+cn = "${CLIENT}"
+uid = "${CLIENT}"
 unit = "ocserv"
 expiration_days = 3650
 signing_key
