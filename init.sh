@@ -1,9 +1,10 @@
 #!/bin/sh
 set -e
-
+OC_CERT_AND_PLAIN="true"
 sed -i -e "s@^ipv4-network =.*@ipv4-network = ${VPN_NETWORK}@" \
        -e "s@^ipv4-netmask =.*@ipv4-netmask = ${VPN_NETMASK}@" /etc/ocserv/ocserv.conf
       #  -e "1s@^no-route =.*@no-route = ${LAN_NETWORK}/${LAN_NETMASK}@"
+
 if [ "$OC_CERT_AND_PLAIN" = "true" ]; then
   echo "${VPN_PASSWORD}" | ocpasswd -c /etc/ocserv/ocpasswd "${VPN_USERNAME}"
 else
