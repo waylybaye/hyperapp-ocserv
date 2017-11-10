@@ -6,6 +6,7 @@ RUN apk add --update --no-cache musl-dev iptables libev openssl gnutls-dev readl
 ARG OC_VERSION=0.11.8
 
 ENV PORT=443
+ENV VPN_DOMAIN=example.com
 ENV VPN_NETWORK=10.24.0.0
 ENV VPN_NETMASK=255.255.255.0
 ENV LAN_NETWORK=192.168.0.0
