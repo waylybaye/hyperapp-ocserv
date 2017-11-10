@@ -1,5 +1,5 @@
 FROM alpine:edge
-MAINTAINER hyperapp
+MAINTAINER bao3.cn@gmail.com
 
 RUN apk add --update --no-cache musl-dev iptables libev openssl gnutls-dev readline-dev libnl3-dev lz4-dev libseccomp-dev gnutls-utils
 
@@ -48,7 +48,7 @@ RUN set -x \
 COPY new_CN_route.txt /etc/ocserv/cn-no-route.txt
 COPY ocserv.conf /etc/ocserv
 WORKDIR /etc/ocserv
-
+VOLUME ["/etc/ocserv/certs/"]
 COPY docker-entrypoint.sh /entrypoint.sh
 COPY init.sh /init.sh
 ENTRYPOINT ["/entrypoint.sh"]
