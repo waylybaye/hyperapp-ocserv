@@ -13,6 +13,10 @@ ENV LAN_NETWORK=192.168.0.0
 ENV LAN_NETMASK=255.255.0.0
 ENV VPN_USERNAME=hyperapp
 ENV VPN_PASSWORD=hyperapp
+#OC_CERT_AND_PLAIN 是代表您是否需要同时具备密码验证和证书验证功能
+#由于 anyconnect 的特性，如果使用密码验证，客户端软件在每次连接都必须输入一次，不能保存和记忆。所以建议禁用掉就好了
+# true 代表两各方式都有，false 代表禁用
+ENV OC_CERT_AND_PLAIN=false
 ENV TERM=xterm
 
 RUN buildDeps="xz gcc autoconf make linux-headers libev-dev  "; \
