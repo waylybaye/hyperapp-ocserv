@@ -45,7 +45,7 @@ RUN set -x \
 	&& sed -i 's/^route/#route/' /etc/ocserv/ocserv.conf \
 	&& sed -i 's/^no-route/#no-route/' /etc/ocserv/ocserv.conf
 
-COPY cn-no-route.txt /etc/ocserv
+COPY new_CN_route.txt /etc/ocserv/cn-no-route.txt
 COPY ocserv.conf /etc/ocserv
 WORKDIR /etc/ocserv
 
