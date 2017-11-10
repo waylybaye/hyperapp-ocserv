@@ -1,6 +1,7 @@
 #!/bin/sh
 set -e
-OC_CERT_AND_PLAIN="true"
+#OC_CERT_AND_PLAIN 是在 Dockerfile里定义的全局变量。
+echo $OC_CERT_AND_PLAIN
 sed -i -e "s@^ipv4-network =.*@ipv4-network = ${VPN_NETWORK}@" \
        -e "s@^ipv4-netmask =.*@ipv4-netmask = ${VPN_NETMASK}@" /etc/ocserv/ocserv.conf
       #  -e "1s@^no-route =.*@no-route = ${LAN_NETWORK}/${LAN_NETMASK}@"
