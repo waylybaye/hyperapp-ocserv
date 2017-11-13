@@ -3,7 +3,7 @@ MAINTAINER bao3.cn@gmail.com
 
 RUN apk add --update --no-cache musl-dev iptables libev openssl gnutls-dev readline-dev libnl3-dev lz4-dev libseccomp-dev gnutls-utils
 
-ARG OC_VERSION=0.11.8
+ARG OC_VERSION=0.11.9
 
 ENV PORT=443
 ENV VPN_DOMAIN=example.com
