@@ -102,7 +102,8 @@ if [ ! -f /etc/ocserv/certs/"${CLIENT}".p12 ]; then
            --p12-name "${VPN_DOMAIN}" \
            --password "${VPN_PASSWORD}"
 fi
-
+touch /etc/ocserv/config-per-user/${VPN_USERNAME}
+[ -z "${AUTORoute==True" ] && cat /etc/ocserv/config-per-user/route.txt >> /etc/ocserv/config-per-user/${VPN_USERNAME}
 rm ocserv-ca.tmpl
 rm ocserv-server.tmpl
 rm ocserv-client.tmpl
