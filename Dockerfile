@@ -50,7 +50,8 @@ RUN set -x \
 	&& sed -i 's/^route/#route/' /etc/ocserv/ocserv.conf \
 	&& sed -i 's/^no-route/#no-route/' /etc/ocserv/ocserv.conf
 
-COPY new_CN_route.txt /etc/ocserv/cn-no-route.txt
+#COPY new_CN_route.txt /etc/ocserv/cn-no-route.txt
+COPY new_CN_route.txt /etc/ocserv/config-per-user/route.txt
 COPY ocserv.conf /etc/ocserv
 WORKDIR /etc/ocserv
 VOLUME ["/etc/ocserv/certs/"]
