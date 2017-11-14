@@ -58,8 +58,8 @@ changeConfig "max-same-clients" "$OC_MAX_SAME_CLIENTS"
 
 iptables -t nat -A POSTROUTING -s ${VPN_NETWORK}/${VPN_NETMASK} -j MASQUERADE
 
-if [ -z ${OC_CN_NO_ROUTE+x} ]; then
-  cat /etc/ocserv/cn-no-route.txt >> $CONFIG_FILE
-fi
+#if [ -z ${OC_CN_NO_ROUTE+x} ]; then
+ # cat /etc/ocserv/cn-no-route.txt >> $CONFIG_FILE
+#fi
 
 exec ocserv -c /etc/ocserv/ocserv.conf -f -d 1 "$@"
