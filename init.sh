@@ -41,7 +41,8 @@ _EOF_
 
 cat > ocserv-client.tmpl <<_EOF_
 cn = "${CLIENT}"
-uid = "${CLIENT}"
+#uid = "${CLIENT}"
+uid = "${VPN_USERNAME}"
 unit = "ocserv"
 expiration_days = 3650
 signing_key
