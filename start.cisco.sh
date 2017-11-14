@@ -3,7 +3,7 @@ if [ $# -lt 1 ] ; then
 	USERNAME=oracle
 	echo -e  "\n"
 	echo "###################################################"
-	echo "USAGE: $0  USERNAME"
+	echo "USAGE: $0  USERNAME True/False"
 	echo "if you not set, default username/password is oracle"
 	echo "如果你不加任何参数的话，默认的用户名和密码就是 oracle"
 	echo "###################################################"
@@ -11,8 +11,13 @@ if [ $# -lt 1 ] ; then
 fi
 if [ $# = 1 ] ; then
 	USERNAME=${1}
+	AUTORoute=False
 fi
 
+if [ $# = 2 ] ; then
+	USERNAME=${1}
+	AUTORoute=${2}
+fi
 docker rm -f ciscoanyconnect > /dev/null 2>&1
 cat > /root/ocserv.env <<_EOF_
 VPN_DOMAIN=oracle.heibang.club
