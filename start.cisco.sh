@@ -11,23 +11,24 @@ if [ $# -lt 1 ] ; then
 fi
 if [ $# = 1 ] ; then
 	USERNAME=${1}
-	AUTORoute=False
+	CNRoute=False
 fi
 
 if [ $# = 2 ] ; then
 	USERNAME=${1}
-	AUTORoute=${2}
+	CNRoute=${2}
 fi
 docker rm -f ciscoanyconnect > /dev/null 2>&1
 cat > /root/ocserv.env <<_EOF_
 VPN_DOMAIN=oracle.heibang.club
 VPN_USERNAME=${USERNAME}
 VPN_PASSWORD=${USERNAME}
+AUTORoute=${CNRoute}
 OC_CERT_AND_PLAIN=false
 OC_GENERATE_KEY=false
 _EOF_
 
-docker run -d --restart=always -p 443:443/tcp -p 443:443/udp --env-file /root/ocserv.env -v /srv/docker/certs:/etc/ocserv/certs/ --cap-add=NET_ADMIN  --name ciscoanyconnect bao3/ssl-only-ocserv
+docker run -d --restart=always -p 443:443/tcp -p 443:443/udp --env-file /root/ocserv.env -v /srv/docker/certs:/etc/ocserv/certs/ -v ./config-per-user:/etc/ocserv/config-per-user --cap-add=NET_ADMIN  --name ciscoanyconnect bao3/ssl-only-ocserv
 docker logs ciscoanyconnect
 rm -rf /root/ocserv.env
 
