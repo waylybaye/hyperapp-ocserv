@@ -20,7 +20,7 @@ if [ $# = 2 ] ; then
 fi
 docker rm -f ciscoanyconnect > /dev/null 2>&1
 cat > /root/ocserv.env <<_EOF_
-VPN_DOMAIN=miami.heibang.club
+VPN_DOMAIN=oracle.heibang.club
 VPN_USERNAME=${USERNAME}
 VPN_PASSWORD=${USERNAME}
 OC_CERT_AND_PLAIN=false
