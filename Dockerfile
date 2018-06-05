@@ -1,17 +1,22 @@
 FROM alpine:edge
-MAINTAINER hyperapp
+MAINTAINER bao3.cn@gmail.com
 
 RUN apk add --update --no-cache musl-dev iptables libev openssl gnutls-dev readline-dev libnl3-dev lz4-dev libseccomp-dev gnutls-utils
 
-ARG OC_VERSION=0.11.8
+ARG OC_VERSION=0.11.9
 
 ENV PORT=443
+ENV VPN_DOMAIN=example.com
 ENV VPN_NETWORK=10.24.0.0
 ENV VPN_NETMASK=255.255.255.0
 ENV LAN_NETWORK=192.168.0.0
 ENV LAN_NETMASK=255.255.0.0
 ENV VPN_USERNAME=hyperapp
 ENV VPN_PASSWORD=hyperapp
+#OC_CERT_AND_PLAIN 是代表您是否需要同时具备密码验证和证书验证功能
+#由于 anyconnect 的特性，如果使用密码验证，客户端软件在每次连接都必须输入一次，不能保存和记忆。所以建议禁用掉就好了
+# true 代表两各方式都有，false 代表禁用
+ENV OC_CERT_AND_PLAIN=false
 ENV TERM=xterm
 
 RUN buildDeps="xz gcc autoconf make linux-headers libev-dev  "; \
@@ -45,10 +50,11 @@ RUN set -x \
 	&& sed -i 's/^route/#route/' /etc/ocserv/ocserv.conf \
 	&& sed -i 's/^no-route/#no-route/' /etc/ocserv/ocserv.conf
 
-COPY cn-no-route.txt /etc/ocserv
+#COPY new_CN_route.txt /etc/ocserv/cn-no-route.txt
+COPY new_CN_route.txt /etc/ocserv/route.txt
 COPY ocserv.conf /etc/ocserv
 WORKDIR /etc/ocserv
-
+VOLUME ["/etc/ocserv/certs/"]
 COPY docker-entrypoint.sh /entrypoint.sh
 COPY init.sh /init.sh
 ENTRYPOINT ["/entrypoint.sh"]

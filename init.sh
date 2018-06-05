@@ -1,11 +1,17 @@
 #!/bin/sh
 set -e
-
+#OC_CERT_AND_PLAIN 是在 Dockerfile里定义的全局变量。
+echo $OC_CERT_AND_PLAIN
 sed -i -e "s@^ipv4-network =.*@ipv4-network = ${VPN_NETWORK}@" \
        -e "s@^ipv4-netmask =.*@ipv4-netmask = ${VPN_NETMASK}@" /etc/ocserv/ocserv.conf
       #  -e "1s@^no-route =.*@no-route = ${LAN_NETWORK}/${LAN_NETMASK}@"
 
-echo "${VPN_PASSWORD}" | ocpasswd -c /etc/ocserv/ocpasswd "${VPN_USERNAME}"
+if [ "$OC_CERT_AND_PLAIN" = "true" ]; then
+  echo "${VPN_PASSWORD}" | ocpasswd -c /etc/ocserv/ocpasswd "${VPN_USERNAME}"
+else
+  echo -n "${VPN_PASSWORD}${RANDOM}" | md5sum | sha256sum | ocpasswd -c /etc/ocserv/ocpasswd "${VPN_USERNAME}"
+fi
+#echo "${VPN_PASSWORD}" | ocpasswd -c /etc/ocserv/ocpasswd "${VPN_USERNAME}"
 CLIENT="${VPN_USERNAME}@${VPN_DOMAIN}"
 
 mkdir -p /etc/ocserv/certs
@@ -34,8 +40,9 @@ tls_www_server
 _EOF_
 
 cat > ocserv-client.tmpl <<_EOF_
-cn = "client@${VPN_DOMAIN}"
-uid = "client@${VPN_DOMAIN}"
+cn = "${CLIENT}"
+#uid = "${CLIENT}"
+uid = "${VPN_USERNAME}"
 unit = "ocserv"
 expiration_days = 3650
 signing_key
@@ -95,7 +102,8 @@ if [ ! -f /etc/ocserv/certs/"${CLIENT}".p12 ]; then
            --p12-name "${VPN_DOMAIN}" \
            --password "${VPN_PASSWORD}"
 fi
-
+touch /etc/ocserv/config-per-user/${VPN_USERNAME}
+[  "${AUTORoute}" = "True" ] && cat /etc/ocserv/route.txt >> /etc/ocserv/config-per-user/${VPN_USERNAME}
 rm ocserv-ca.tmpl
 rm ocserv-server.tmpl
 rm ocserv-client.tmpl
